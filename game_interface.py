@@ -36,7 +36,7 @@ class GameInterface:
         self.results = 'Time: ' + str(round(self.total_time) // 60) + 'm ' + str(round(self.total_time) % 60) + 's   ' \
                        + 'Accuracy: ' + str(round(self.accuracy)) + '%   ' + 'Speed: ' + str(round(self.speed))
 
-        image = pygame.image.load('1.png')
+        image = pygame.image.load('icon_picture.png')
         image = pygame.transform.scale(image, (200, 200))
         image_place = (self.w / 2 - 100, self.h - 250)  # ?
         screen.blit(image, image_place)
