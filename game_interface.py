@@ -3,7 +3,7 @@ import pygame
 
 
 class GameInterface:
-    """
+    """A class that consists of function for the user interface of the game.
 
     """
     def __init__(self, w, h, time_start, total_time, accuracy, speed, results, c_results):
@@ -25,13 +25,13 @@ class GameInterface:
 
     def show_results(self, screen, game_text, correct_letter_count, letter_count):
         """A function that count results(time, accuracy, speed) of particular game and total results of all games put
-         them to the screen
+         them to the screen.
 
-        :param screen:
-        :param game_text:
-        :param correct_letter_count:
-        :param letter_count:
-        :return:
+        :param screen: Surface
+        :param game_text: GameText
+        :param correct_letter_count: int
+        :param letter_count: int
+        :return: None
         """
         if not self.end:
             self.total_time = time.time() - self.time_start
@@ -45,9 +45,15 @@ class GameInterface:
         self.results = 'Time: ' + str(round(self.total_time) // 60) + 'm ' + str(round(self.total_time) % 60) + 's   ' \
                        + 'Accuracy: ' + str(round(self.accuracy)) + '%   ' + 'Speed: ' + str(
             round(self.speed)) + ' l/m '
-        with open('results.txt', 'a') as f_res:
-            f_res.write(str(round(self.total_time)) + ',' + str(correct_letter_count) + ','
-                        + str(letter_count) + '\n')
+        with open('results.txt') as f:
+            if f.read() != '':
+                with open('results.txt', 'a') as f_res:
+                    f_res.write(str(round(self.total_time)) + ',' + str(correct_letter_count) + ','
+                                + str(letter_count) + '\n')
+            else:
+                with open('results.txt', 'w') as f_res:
+                    f_res.write(str(round(self.total_time)) + ',' + str(correct_letter_count) + ','
+                                + str(letter_count) + '\n')
         with open('results.txt') as f_c_res:
             c_time = 0
             c_correct_letter_count = 0

@@ -1,6 +1,5 @@
 import os
 from unittest import mock
-
 import pygame.event
 from test_game_text import take_first
 

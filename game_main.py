@@ -7,7 +7,7 @@ from game_text import GameText
 
 
 class GameMain:
-    """
+    """A main class that contains the logic of the game. Consists of functions for launching and resetting the game.
 
     """
 
@@ -27,11 +27,11 @@ class GameMain:
         pygame.init()
 
     def reset_game(self, game_interface, game_text):
-        """A function that restart the game and reset all variables, except total indicators
+        """A function that restart the game and reset all variables, except total indicators.
 
-        :param game_interface:
-        :param game_text:
-        :return:
+        :param game_interface: GameInterface
+        :param game_text: GameText
+        :return: None
         """
         game_interface.screen.blit(game_interface.open_image, (0, 0))
 
@@ -77,11 +77,11 @@ class GameMain:
         return self.active
 
     def run(self, game_interface, game_text):
-        """A function that launches program and update screen during the game is active
+        """A function that launches the program and update the screen during the game is active.
 
-        :param game_interface:
-        :param game_text:
-        :return:
+        :param game_interface: GameInterface
+        :param game_text: GameText
+        :return: None
         """
         self.reset_game(game_interface, game_text)
         self.running = True
