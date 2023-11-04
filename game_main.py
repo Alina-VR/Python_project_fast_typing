@@ -7,17 +7,32 @@ from game_text import GameText
 
 
 class GameMain:
-    def __init__(self, r, a, e):
-        self.reset = r
-        self.active = a
-        self.end = e
+    """
+
+    """
+
+    def __init__(self):
+        self.reset = False
+        self.active = False
+        self.end = False
         self.COLOR_RES = (87, 191, 49)
         self.COLOR_FIRST = (44, 139, 9)
         self.COLOR_SEC = (152, 76, 214)
 
+        self.letter_count = 0
+        self.correct_letter_count = 0
+        self.index = 0
+        self.is_previous_correct = []
+
         pygame.init()
 
     def reset_game(self, game_interface, game_text):
+        """A function that restart the game and reset all variables, except total indicators
+
+        :param game_interface:
+        :param game_text:
+        :return:
+        """
         game_interface.screen.blit(game_interface.open_image, (0, 0))
 
         pygame.display.update()
@@ -25,7 +40,12 @@ class GameMain:
 
         self.reset = False
         self.end = False
-        self.active = False
+        self.set_active(False)
+
+        self.letter_count = 0
+        self.correct_letter_count = 0
+        self.index = 0
+        self.is_previous_correct = []
 
         game_text.input_text = ''
         game_text.words = ''
@@ -36,6 +56,11 @@ class GameMain:
 
         game_text.words = game_text.get_sentence()
 
+        assert game_text.words
+
+        for i in range(len(game_text.words)):
+            self.is_previous_correct.append(False)
+
         if not game_text.words:
             self.reset_game(game_interface, game_text)
         game_interface.screen.fill((255, 255, 255))
@@ -45,16 +70,22 @@ class GameMain:
 
         pygame.display.update()
 
-    def run(self, game_interface, game_text):
-        self.reset_game(game_interface, game_text)
+    def set_active(self, val):
+        self.active = val
 
+    def get_active(self):
+        return self.active
+
+    def run(self, game_interface, game_text):
+        """A function that launches program and update screen during the game is active
+
+        :param game_interface:
+        :param game_text:
+        :return:
+        """
+        self.reset_game(game_interface, game_text)
         self.running = True
-        letter_count = 0
-        correct_letter_count = 0
-        index = 0
-        is_correct = []
-        for i in range(len(game_text.words)):
-            is_correct.append(False)
+
         while self.running:
             clock = pygame.time.Clock()
             game_interface.screen.fill((255, 255, 255), (200, 250, 800, 50))
@@ -68,33 +99,34 @@ class GameMain:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
-                    if self.active and not self.end:
+                    if self.get_active() and not self.end:
                         if event.key == pygame.K_RETURN:
                             print(game_text.input_text)
-                            game_interface.show_results(game_interface.screen, game_text, correct_letter_count, letter_count)
+                            game_interface.show_results(game_interface.screen, game_text, self.correct_letter_count,
+                                                        self.letter_count)
                             print(game_interface.results)
-                            game_text.add_text(game_interface, game_interface.results, 450, 'arial',
+                            game_text.add_text(game_interface, game_interface.results, 400, 'arial',
                                                28, self.COLOR_RES)
+                            game_text.add_text(game_interface, game_interface.complete_results, 500, 'arial',
+                                               32, self.COLOR_RES)
                             self.end = True
                         elif event.key == pygame.K_BACKSPACE:
-                            if is_correct[index - 1]:
-                                correct_letter_count -= 1
-                                is_correct[index - 1] = False
+                            if self.is_previous_correct[self.index - 1]:
+                                self.correct_letter_count -= 1
+                                self.is_previous_correct[self.index - 1] = False
                             game_text.input_text = game_text.input_text[:-1]
-                            index -= 1
+                            self.index -= 1
                         else:
-                            try:
-                                if event.key == pygame.K_LSHIFT:
-                                    break
-                                letter_count += 1
-                                if event.unicode == game_text.words[index]:
-                                    game_text.input_text += event.unicode
-                                    is_correct[index] = True
-                                    correct_letter_count += 1
-                                    index += 1
-                            except:
-                                pass
-                        print(letter_count, correct_letter_count, index, is_correct)
+                            if event.key == pygame.K_LSHIFT:
+                                break
+                            self.letter_count += 1
+                            if event.unicode == game_text.words[self.index]:
+                                game_text.input_text += event.unicode
+                                self.is_previous_correct[self.index] = True
+                                self.correct_letter_count += 1
+                                self.index += 1
+
+                        print(self.letter_count, self.correct_letter_count, self.index, self.is_previous_correct)
                 elif event.type == pygame.MOUSEBUTTONUP:
                     x, y = pygame.mouse.get_pos()
                     if 200 <= x <= 1000 and 250 <= y <= 300:
@@ -108,7 +140,9 @@ class GameMain:
         clock.tick(60)
 
 
-game_interface = GameInterface(1200, 800, 0, 0, '0%', 0, 'Time: 0 Accuracy: 0% Speed: 0 wordss per minute')
-game_text = GameText('', '')
-game_main = GameMain(True, False, False)
-game_main.run(game_interface, game_text)
+if __name__ == '__main__':
+    game_interface = GameInterface(1200, 800, 0, 0, '0%', 0, 'Time: 0 Accuracy: 0% Speed: 0 words per minute',
+                                   'Total time: 0 Total accuracy: 0% Total speed: 0 words per minute')
+    game_text = GameText('', '')
+    game_main = GameMain()
+    game_main.run(game_interface, game_text)
