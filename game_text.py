@@ -3,9 +3,9 @@ import random
 
 
 class GameText:
-    def __init__(self, input_text, word):
+    def __init__(self, input_text, words):
         self.input_text = input_text
-        self.word = word
+        self.words = words
         pygame.init()
 
     def add_text(self, game_interface, message, coord, f_style, f_size, f_color):
