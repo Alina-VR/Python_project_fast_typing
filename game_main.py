@@ -10,7 +10,6 @@ class GameMain:
     """A main class that contains the logic of the game. Consists of functions for launching and resetting the game.
 
     """
-
     def __init__(self):
         self.reset = False
         self.active = False
@@ -23,6 +22,7 @@ class GameMain:
         self.correct_letter_count = 0
         self.index = 0
         self.is_previous_correct = []
+        self.path = ''
 
         pygame.init()
 
@@ -34,9 +34,15 @@ class GameMain:
         :return: None
         """
         game_interface.screen.blit(game_interface.open_image, (0, 0))
-
+        print('Type, what file do you want to use like a list of the sentences?' + '/n' +
+              'If you want to use sentences_for_typing.txt - then type "y"')
         pygame.display.update()
         time.sleep(2)
+        self.path = input()
+        if self.path == 'y':
+            self.path = 'sentences_for_typing.txt'
+
+        pygame.display.update()
 
         self.reset = False
         self.end = False
@@ -54,7 +60,7 @@ class GameMain:
         game_interface.speed = 0
         game_interface.end = False
 
-        game_text.words = game_text.get_sentence()
+        game_text.words = game_text.get_sentence(self.path)
 
         assert game_text.words
 
@@ -143,6 +149,7 @@ class GameMain:
 if __name__ == '__main__':
     game_interface = GameInterface(1200, 800, 0, 0, '0%', 0, 'Time: 0 Accuracy: 0% Speed: 0 words per minute',
                                    'Total time: 0 Total accuracy: 0% Total speed: 0 words per minute')
+
     game_text = GameText('', '')
     game_main = GameMain()
     game_main.run(game_interface, game_text)

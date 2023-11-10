@@ -28,12 +28,12 @@ class GameText:
         game_interface.screen.blit(text, place)
         pygame.display.update()
 
-    def get_sentence(self):
+    def get_sentence(self, path):
         """A function that choose a return a random sentence from the file.
 
-        :return: sentence: str
+        :return: str
         """
-        with open('sentences_for_typing.txt', 'r') as f:
+        with open(path, 'r') as f:
             sentences = f.readlines()
             sentence = random.choice(sentences).strip()
             return sentence

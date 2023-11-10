@@ -20,11 +20,13 @@ this way you will improve you typing skills.
 Also all files from the directory are necessary
 
 #### Launch:
-* type: *_Run game_main_*
+* run *_game_main_*
 
 #### In the game:
-* when you launch the game, you will see the start picture, 
-you need just wait
+* when you launch the game, you will see the start picture
+* then you need to type the appropriate file with text 
+(_note: it should consist of **split** lines!_) in the console 
+and return to the game
 * you will see the sentence and the input field, before 
 start typing you need to **click your mouse inside this field**,
 only then you can start typing
