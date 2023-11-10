@@ -1,7 +1,6 @@
 import sys
 import time
 import pygame
-
 from game_interface import GameInterface
 from game_text import GameText
 
@@ -24,6 +23,7 @@ class GameMain:
         self.is_previous_correct = []
         self.path = ''
 
+
         pygame.init()
 
     def reset_game(self, game_interface, game_text):
@@ -34,13 +34,14 @@ class GameMain:
         :return: None
         """
         game_interface.screen.blit(game_interface.open_image, (0, 0))
-        print('Type, what file do you want to use like a list of the sentences?' + '/n' +
-              'If you want to use sentences_for_typing.txt - then type "y"')
-        pygame.display.update()
-        time.sleep(2)
-        self.path = input()
-        if self.path == 'y':
-            self.path = 'sentences_for_typing.txt'
+        if self.path == '':
+            print('Type, what file do you want to use like a list of the sentences?')
+            print('If you want to use sentences_for_typing.txt - then type "y"')
+            pygame.display.update()
+            time.sleep(2)
+            self.path = input()
+            if self.path == 'y':
+                self.path = 'sentences_for_typing.txt'
 
         pygame.display.update()
 
@@ -91,6 +92,9 @@ class GameMain:
         """
         self.reset_game(game_interface, game_text)
         self.running = True
+        dict_incorrect_letters = dict()
+        for i in range(32, 128):
+            dict_incorrect_letters[chr(i)] = 0
 
         while self.running:
             clock = pygame.time.Clock()
@@ -101,16 +105,21 @@ class GameMain:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    with open('heatmap.txt', 'w') as heatmap:
+                        sort_dict_inc_let = sorted(dict_incorrect_letters.items(), key=lambda x: x[1], reverse=True)
+                        for (key, value) in sort_dict_inc_let:
+                            if value != 0:
+                                heatmap.write(key + ':' + str(value) + '\n')
+
                     self.running = False
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
                     if self.get_active() and not self.end:
                         if event.key == pygame.K_RETURN:
-                            print(game_text.input_text)
-                            game_interface.show_results(game_interface.screen, game_text, self.correct_letter_count,
-                                                        self.letter_count)
-                            print(game_interface.results)
+                            game_interface.show_final_results(game_interface.screen, game_text, self.correct_letter_count,
+                                                              self.letter_count)
+                            pygame.draw.rect(game_interface.screen, (255, 255, 255), (0, 300, game_interface.w, 300))
                             game_text.add_text(game_interface, game_interface.results, 400, 'arial',
                                                28, self.COLOR_RES)
                             game_text.add_text(game_interface, game_interface.complete_results, 500, 'arial',
@@ -131,8 +140,13 @@ class GameMain:
                                 self.is_previous_correct[self.index] = True
                                 self.correct_letter_count += 1
                                 self.index += 1
+                                game_interface.show_results(self.correct_letter_count, self.letter_count)
+                                pygame.draw.rect(game_interface.screen, (255, 255, 255), (0, 300, game_interface.w, 300))
+                                game_text.add_text(game_interface, game_interface.results, 400, 'arial',
+                                                   28, self.COLOR_RES)
+                            else:
+                                dict_incorrect_letters[event.unicode] += 1
 
-                        print(self.letter_count, self.correct_letter_count, self.index, self.is_previous_correct)
                 elif event.type == pygame.MOUSEBUTTONUP:
                     x, y = pygame.mouse.get_pos()
                     if 200 <= x <= 1000 and 250 <= y <= 300:
@@ -142,6 +156,7 @@ class GameMain:
                     if 500 <= x <= 700 and 600 <= y <= 700 and self.end:
                         self.reset_game(game_interface, game_text)
                         x, y = pygame.mouse.get_pos()
+
             pygame.display.update()
         clock.tick(60)
 

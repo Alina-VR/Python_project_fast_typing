@@ -37,5 +37,7 @@ write wrong letter, you can use backspace
 results: time, accuracy and speed for this attempt and for all
 your attempts
 * if you want to play again - type *_reset_*
+* if you want to see a hashmap the keys in which you make 
+mistakes most often, go to the file *_heatmap.txt_*
 * if you want to reset statistics, delete all records in
 *_results.txt_*
